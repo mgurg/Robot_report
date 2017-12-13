@@ -83,11 +83,20 @@ for line in searchfile:
 
 searchfile.close()
 
-print(tcp[1])
-print(tcp[2])
-print(tcp[19])
 
-print(base[1])
+print('TOOLS')
+for i in range(64):
+    if len(tcp[i]['x'])>0:
+        print(tcp[i])
+
+
+print('BASE')
+for i in range(64):
+    if len(base[i]['x'])>0:
+        print(base[i])
+
+
+
     
 
 def inplace_change(filename, old_string, new_string):
@@ -98,7 +107,7 @@ def inplace_change(filename, old_string, new_string):
     # Safely write the changed content, if found in the file
     with open(filename, 'w') as f:
         #print 'Changing "{old_string}" to "{new_string}" in {filename}'
-        s = s.replace(old_string, new_string)
+        s = s.replace(old_string, new_string, 1)
         f.write(s)
 
     
@@ -109,7 +118,13 @@ def write():
     backup.extractall('Temp/')
     backup.close
 
-    inplace_change('Temp/word/document.xml','GRP_01','ALA')
+    for i in range(64):
+        if len(tcp[i]['x'])>0:
+            inplace_change('Temp/word/document.xml','Tool_XX_TCP',tcp[i]['name'])       
+        if len(base[i]['x'])>0:
+            inplace_change('Temp/word/document.xml','Tool_XX_TCP',base[i]['name'])
+
+
 
     backup = zipfile.ZipFile('archive.docx', 'w')
     for folder, subfolders, files in os.walk('Temp\\'):
@@ -121,7 +136,7 @@ def write():
     print("--- %s seconds ---" % (time.time() - start_time))
 
     
-#write()
+write()
  
 
 
