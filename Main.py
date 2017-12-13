@@ -11,6 +11,7 @@ import sys
 from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QPushButton
 import os,zipfile
 import time
+import shutil
 #from MainWND import Ui_MainWindow
 
 # Create empty table (x, y, z, a, b, c, name)
@@ -99,7 +100,7 @@ for i in range(64):
 
     
 
-def inplace_change(filename, old_string, new_string):
+def inplace_change(filename, old_string, new_string=''):
     # Safely read the input filename using 'with'
     with open(filename) as f:
         s = f.read()
@@ -107,7 +108,10 @@ def inplace_change(filename, old_string, new_string):
     # Safely write the changed content, if found in the file
     with open(filename, 'w') as f:
         #print 'Changing "{old_string}" to "{new_string}" in {filename}'
-        s = s.replace(old_string, new_string, 1)
+        if len(new_string) == 0:
+            s = s.replace(old_string, '') 
+        else:
+            s = s.replace(old_string, new_string, 1)
         f.write(s)
 
     
@@ -120,10 +124,43 @@ def write():
 
     for i in range(64):
         if len(tcp[i]['x'])>0:
-            inplace_change('Temp/word/document.xml','Tool_XX_TCP',tcp[i]['name'])       
-        if len(base[i]['x'])>0:
-            inplace_change('Temp/word/document.xml','Tool_XX_TCP',base[i]['name'])
+            inplace_change('Temp/word/document.xml','Tool_XX_TCP',tcp[i]['name'])
 
+            inplace_change('Temp/word/document.xml','VAL_TCP_X',tcp[i]['x']) 
+            inplace_change('Temp/word/document.xml','VAL_TCP_Y',tcp[i]['y']) 
+            inplace_change('Temp/word/document.xml','VAL_TCP_Z',tcp[i]['z'])   
+
+            inplace_change('Temp/word/document.xml','VAL_TCP_A',tcp[i]['a']) 
+            inplace_change('Temp/word/document.xml','VAL_TCP_B',tcp[i]['b']) 
+            inplace_change('Temp/word/document.xml','VAL_TCP_C',tcp[i]['c'])  
+
+        if len(base[i]['x'])>0:
+            inplace_change('Temp/word/document.xml','Base_XX',base[i]['name'])
+            inplace_change('Temp/word/document.xml','V_BASE_X',tcp[i]['x']) 
+            inplace_change('Temp/word/document.xml','V_BASE_Y',tcp[i]['y']) 
+            inplace_change('Temp/word/document.xml','V_BASE_Z',tcp[i]['z'])   
+
+            inplace_change('Temp/word/document.xml','V_BASE_A',tcp[i]['a']) 
+            inplace_change('Temp/word/document.xml','V_BASE_B',tcp[i]['b']) 
+            inplace_change('Temp/word/document.xml','V_BASE_C',tcp[i]['c']) 
+
+    inplace_change('Temp/word/document.xml','Tool_XX_TCP',)
+    inplace_change('Temp/word/document.xml','Base_XX',)
+
+    inplace_change('Temp/word/document.xml','VAL_TCP_X',) 
+    inplace_change('Temp/word/document.xml','VAL_TCP_Y',) 
+    inplace_change('Temp/word/document.xml','VAL_TCP_Z',)   
+    inplace_change('Temp/word/document.xml','VAL_TCP_A',) 
+    inplace_change('Temp/word/document.xml','VAL_TCP_B',) 
+    inplace_change('Temp/word/document.xml','VAL_TCP_C',)   
+
+    inplace_change('Temp/word/document.xml','V_BASE_X',tcp[i]['x']) 
+    inplace_change('Temp/word/document.xml','V_BASE_Y',tcp[i]['y']) 
+    inplace_change('Temp/word/document.xml','V_BASE_Z',tcp[i]['z'])   
+
+    inplace_change('Temp/word/document.xml','V_BASE_A',tcp[i]['a']) 
+    inplace_change('Temp/word/document.xml','V_BASE_B',tcp[i]['b']) 
+    inplace_change('Temp/word/document.xml','V_BASE_C',tcp[i]['c']) 
 
 
     backup = zipfile.ZipFile('archive.docx', 'w')
@@ -133,11 +170,13 @@ def write():
             backup.write(os.path.join(folder, file), os.path.relpath(os.path.join(folder,file), 'Temp\\'), compress_type = zipfile.ZIP_DEFLATED)
     backup.close()
 
+    
+
     print("--- %s seconds ---" % (time.time() - start_time))
 
     
 write()
- 
+shutil.rmtree('Temp/') 
 
 
 
