@@ -48,80 +48,47 @@ def round_coord(text):
     return str(round(float(text),3))
 
 def get_name(n,tcp):
-    #tcp = 'TOOL'
-    #n = 1
-    sline = 'TOOL_NAME[1,]="GRP_TCP"'
-    sline = 'TOOL_NAME[19,]="mess tcp"'
-    #pattern = '%s_NAME[%s,]'%(tcp,n)
-    #i = len(pattern)
+    i = len('%s_NAME[%s,]'%(tcp,n))
 
-    l = '%s_NAME[%s,]'%(tcp,n)
-    i = len(l)
-    print(str(i))
-
-    #sfile = open("Backup/$config.dat", "r")
-    
-    #for sline in sfile.readlines():
-    #print(str(i)
-    # if sline[0:13]=='%s_NAME[%s,]'%(tcp,n):
-    if sline[0:i]=='%s_NAME[%s,]'%(tcp,n):
-        print("test2")
-        return sline[i+1:].replace('"','').strip()
+    sfile = open("Backup/$config.dat", "r")
+    for sline in sfile.readlines():
+        if sline[0:i]=='%s_NAME[%s,]'%(tcp,n):
+            return sline[i+1:].replace('"','').strip()
     return ''
 
 tcp={}
 base={}
 programs={}
-for i in range(10):
+for i in range(64):
     tcp[i]=empty_coords()
-    #print (tcp[i])
     base[i]=empty_coords()
     
-#print (base[0])
 
 #def get_name(backup, n,tcp):
 #    curfile = backup.open('Backup/$config.dat','r')
 
-backup="Backup/$config.dat"
 searchfile = open("Backup/$config.dat", "r")
 for line in searchfile:
     if line[0:9]=='TOOL_DATA':  #search for TOOL_DATA
         fnum=int(line[10:line.find(']')]) # obtain Tool No
         if (fnum<=64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
             tcp[fnum]=get_coords(line)
-            print(str(fnum))
-            tcp[fnum]['name']="ALA_MA_%d"%(fnum)
             tcp[fnum]['name']=get_name(fnum,'TOOL')
                     
     if line[0:9]=='BASE_DATA':
         fnum=int(line[10:line.find(']')])
         if (fnum<32 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
             base[fnum]=get_coords(line)
-            #base[fnum]['name']=get_name(backup,fnum,'BASE')
+            base[fnum]['name']=get_name(fnum,'BASE')
 
 searchfile.close()
 
 print(tcp[1])
 print(tcp[2])
 print(tcp[19])
-    
-def openf():
-    f_path = 'Backup/$config.dat'
-    
-    with open(f_path) as f:
-        lines = list(f)
-        
-        for x in range(148, 160):
-            #tcp[x]=get_coords(lines[x])
-            s_text = lines[x]
-            #print(s_text[14:].replace('"','').strip())
-            #print (tcp[x])
-    
-    f.close()
-    
 
-
-#openf ()
+print(base[1])
+    
 
 def inplace_change(filename, old_string, new_string):
     # Safely read the input filename using 'with'
