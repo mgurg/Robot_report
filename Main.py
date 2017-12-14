@@ -48,57 +48,16 @@ def get_coord(line,coord):
 def round_coord(text):
     return str(round(float(text),3))
 
-def get_name(n,tcp):
+def get_name(path, n,tcp):
+
     i = len('%s_NAME[%s,]'%(tcp,n))
 
-    sfile = open("Backup/$config.dat", "r")
+    sfile = path.open('KRC/R1/System/$config.dat','r')
     for sline in sfile.readlines():
+        sline=sline.decode("utf-8") 
         if sline[0:i]=='%s_NAME[%s,]'%(tcp,n):
             return sline[i+1:].replace('"','').strip()
     return ''
-
-tcp={}
-base={}
-programs={}
-for i in range(64):
-    tcp[i]=empty_coords()
-    base[i]=empty_coords()
-    
-
-#def get_name(backup, n,tcp):
-#    curfile = backup.open('Backup/$config.dat','r')
-
-searchfile = open("Backup/$config.dat", "r")
-for line in searchfile:
-    if line[0:9]=='TOOL_DATA':  #search for TOOL_DATA
-        fnum=int(line[10:line.find(']')]) # obtain Tool No
-        if (fnum<=64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
-            tcp[fnum]=get_coords(line)
-            tcp[fnum]['name']=get_name(fnum,'TOOL')
-                    
-    if line[0:9]=='BASE_DATA':
-        fnum=int(line[10:line.find(']')])
-        if (fnum<32 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
-            base[fnum]=get_coords(line)
-            base[fnum]['name']=get_name(fnum,'BASE')
-
-searchfile.close()
-
-
-print('TOOLS')
-for i in range(64):
-    if len(tcp[i]['x'])>0:
-        print(tcp[i])
-
-
-print('BASE')
-for i in range(64):
-    if len(base[i]['x'])>0:
-        print(base[i])
-
-
-
-    
 
 def inplace_change(filename, old_string, new_string=''):
     # Safely read the input filename using 'with'
@@ -114,10 +73,7 @@ def inplace_change(filename, old_string, new_string=''):
             s = s.replace(old_string, new_string, 1)
         f.write(s)
 
-    
-def write():
-    start_time = time.time()
-
+def write(filename):
     backup=zipfile.ZipFile('Output/OLP.docx','r')
     backup.extractall('Temp/')
     backup.close
@@ -163,21 +119,74 @@ def write():
     inplace_change('Temp/word/document.xml','V_BASE_C',tcp[i]['c']) 
 
 
-    backup = zipfile.ZipFile('archive.docx', 'w')
+    backup = zipfile.ZipFile(filename+'.docx', 'w')
     for folder, subfolders, files in os.walk('Temp\\'):
  
         for file in files:
             backup.write(os.path.join(folder, file), os.path.relpath(os.path.join(folder,file), 'Temp\\'), compress_type = zipfile.ZIP_DEFLATED)
     backup.close()
 
+    shutil.rmtree('Temp/') 
+
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# MAIN PROGRAM
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX        
+
+start_time = time.time()
+
+backupsdir = 'Backup'
+files = os.listdir(backupsdir)
+
+for filename in files:
+    if '.zip' in filename:
+        print('Working on %s'%(filename))
+        backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
+        name=filename.replace('.zip','')
+
+
+        tcp={}
+        base={}
+        programs={}
+
+        for i in range(64):
+            tcp[i]=empty_coords()
+            base[i]=empty_coords()
+
+        searchfile = backup.open('KRC/R1/System/$config.dat','r')
+        
+        for line in searchfile.readlines():
+            line = line.decode("utf-8") 
+            if line[0:9]=='TOOL_DATA':  #search for TOOL_DATA
+                fnum=int(line[10:line.find(']')]) # obtain Tool No
+                if (fnum<=64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
+                    tcp[fnum]=get_coords(line)
+                    tcp[fnum]['name']=get_name(backup,fnum,'TOOL')
+                            
+            if line[0:9]=='BASE_DATA':
+                fnum=int(line[10:line.find(']')])
+                if (fnum<32 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
+                    base[fnum]=get_coords(line)
+                    base[fnum]['name']=get_name(backup,fnum,'BASE')
+
+        searchfile.close()
+        write(name)
+
+
+print('TOOLS')
+for i in range(64):
+    if len(tcp[i]['x'])>0:
+        print(tcp[i])
+
+print('BASE')
+for i in range(64):
+    if len(base[i]['x'])>0:
+        print(base[i])
+
+
+
+print("--- %s seconds ---" % (time.time() - start_time))
+
     
-
-    print("--- %s seconds ---" % (time.time() - start_time))
-
-    
-write()
-shutil.rmtree('Temp/') 
-
 
 
 # class AppWindow(QMainWindow):
