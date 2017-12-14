@@ -11,6 +11,7 @@ import sys
 from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QPushButton
 import os,zipfile
 import time
+import re
 import shutil
 #from MainWND import Ui_MainWindow
 
@@ -68,9 +69,10 @@ def inplace_change(filename, old_string, new_string=''):
     with open(filename, 'w') as f:
         #print 'Changing "{old_string}" to "{new_string}" in {filename}'
         if len(new_string) == 0:
-            s = s.replace(old_string, '') 
+            s = re.sub(old_string, "", s)
+            #s = s.replace(old_string, '') 
         else:
-            s = s.replace(old_string, new_string, 1)
+            s = re.sub(old_string, new_string, s, 1)
         f.write(s)
 
 def write(filename):
