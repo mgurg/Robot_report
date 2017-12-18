@@ -7,3 +7,8 @@
 *.zip_
 *.dat
 *.zip
+setup.py
+.vscode/launch.json
+Output/template.fodg
+*.ui
+.vscode/settings.json

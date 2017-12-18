@@ -27,6 +27,7 @@ def empty_coords():
     coords['name']=''
     return coords
 
+
 # Fill table with values
 def get_coords(line):
     coords={}
@@ -43,8 +44,12 @@ def get_coords(line):
 # Search for value till "," sign
 # Return round value 
 def get_coord(line,coord):
-    pos=line.find(coord)+1
+    pos=line.find(coord)+len(coord)
     return round_coord(line[pos:line[pos:].find(',')+pos])
+
+def get_jcoord(line,coord):
+    pos=line.find(coord)+len(coord)
+    return line[pos:line[pos:].find(',')+pos]
 
 def round_coord(text):
     return str(round(float(text),3))
@@ -59,6 +64,41 @@ def get_name(path, n,tcp):
         if sline[0:i]=='%s_NAME[%s,]'%(tcp,n):
             return sline[i+1:].replace('"','').strip()
     return ''
+
+def empty_guebergabe():
+    guebergabe={}
+    guebergabe['A1']=''
+    guebergabe['A2']=''
+    guebergabe['A3']=''
+    guebergabe['A4']=''
+    guebergabe['A5']=''
+    guebergabe['A6']=''
+    guebergabe['E1']=''
+    guebergabe['name']=''
+    return guebergabe
+
+def get_guebergabe(line):
+    guebergabe={}
+    #line=line[13:].replace('}',',')
+    guebergabe['A1']=get_jcoord(line,'A1')
+    guebergabe['A2']=get_jcoord(line,'A2')
+    guebergabe['A3']=get_jcoord(line,'A3')
+    guebergabe['A4']=get_jcoord(line,'A4')
+    guebergabe['A5']=get_jcoord(line,'A5')
+    guebergabe['A6']=get_jcoord(line,'A6')
+    guebergabe['E1']=get_jcoord(line,'E1')
+    return guebergabe
+
+guebergabe={}
+filename = "Backup/user_global.dat"
+searchfile = open(filename, "r")
+for line in searchfile:
+    if line[19:30] == "XGUEBERGABE":
+        fnum=int(line[30:line.find("=")-1])
+        guebergabe[fnum]=get_guebergabe(line[30:])
+        guebergabe[fnum]['name'] = 'GU'+str(fnum)
+        print(guebergabe[fnum])
+
 
 def inplace_change(filename, old_string, new_string=''):
     # Safely read the input filename using 'with'
@@ -140,7 +180,7 @@ backupsdir = 'Backup'
 files = os.listdir(backupsdir)
 
 for filename in files:
-    if '.zip' in filename:
+    if ('.zip' in filename) and (len("gg") >5):
         print('Working on %s'%(filename))
         backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
         name=filename.replace('.zip','')
@@ -174,22 +214,28 @@ for filename in files:
         write(name)
 
 
-print('TOOLS')
-for i in range(64):
-    if len(tcp[i]['x'])>0:
-        print(tcp[i])
+# print('TOOLS')
+# for i in range(64):
+#     if len(tcp[i]['x']) > 0:
+#         print(tcp[i])
 
-print('BASE')
-for i in range(64):
-    if len(base[i]['x'])>0:
-        print(base[i])
+# print('BASE')
+# for i in range(64):
+#     if len(base[i]['x']) > 0:
+#         print(base[i])
+
+# guebergabe={}
+
+# print('GU')
+# for i in range(30):
+#     print(guebergabe[i])
 
 
 
 print("--- %s seconds ---" % (time.time() - start_time))
 
-    
 
+    
 
 # class AppWindow(QMainWindow):
 #    def __init__(self):
