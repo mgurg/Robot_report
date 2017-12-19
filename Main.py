@@ -8,7 +8,7 @@ Last edited: August 2017
 """
 
 import sys
-from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QPushButton
+#from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QPushButton
 import os,zipfile
 import time
 import re
@@ -62,6 +62,7 @@ def get_name(path, n,tcp):
     for sline in sfile.readlines():
         sline=sline.decode("utf-8") 
         if sline[0:i]=='%s_NAME[%s,]'%(tcp,n):
+            print(sline)
             return sline[i+1:].replace('"','').strip()
     return ''
 
@@ -89,15 +90,15 @@ def get_guebergabe(line):
     guebergabe['E1']=get_jcoord(line,'E1')
     return guebergabe
 
-guebergabe={}
-filename = "Backup/user_global.dat"
-searchfile = open(filename, "r")
-for line in searchfile:
-    if line[19:30] == "XGUEBERGABE":
-        fnum=int(line[30:line.find("=")-1])
-        guebergabe[fnum]=get_guebergabe(line[30:])
-        guebergabe[fnum]['name'] = 'GU'+str(fnum)
-        print(guebergabe[fnum])
+# guebergabe={}
+# filename = "Backup/user_global.dat"
+# searchfile = open(filename, "r")
+# for line in searchfile:
+#     if line[19:30] == "XGUEBERGABE":
+#         fnum=int(line[30:line.find("=")-1])
+#         guebergabe[fnum]=get_guebergabe(line[30:])
+#         guebergabe[fnum]['name'] = 'GU'+str(fnum)
+#         print(guebergabe[fnum])
 
 
 def inplace_change(filename, old_string, new_string=''):
@@ -116,49 +117,49 @@ def inplace_change(filename, old_string, new_string=''):
         f.write(s)
 
 def write(filename):
-    backup=zipfile.ZipFile('Output/OLP.docx','r')
+    backup=zipfile.ZipFile('ReportTemplate/OLP.docx','r')
     backup.extractall('Temp/')
     backup.close
 
     for i in range(64):
         if len(tcp[i]['x'])>0:
-            inplace_change('Temp/word/document.xml','Tool_XX_TCP',tcp[i]['name'])
+            inplace_change('Temp/word/document.xml','TCP_N',tcp[i]['name'])
 
-            inplace_change('Temp/word/document.xml','VAL_TCP_X',tcp[i]['x']) 
-            inplace_change('Temp/word/document.xml','VAL_TCP_Y',tcp[i]['y']) 
-            inplace_change('Temp/word/document.xml','VAL_TCP_Z',tcp[i]['z'])   
+            inplace_change('Temp/word/document.xml','TCP_X',tcp[i]['x']) 
+            inplace_change('Temp/word/document.xml','TCP_Y',tcp[i]['y']) 
+            inplace_change('Temp/word/document.xml','TCP_Z',tcp[i]['z'])   
 
-            inplace_change('Temp/word/document.xml','VAL_TCP_A',tcp[i]['a']) 
-            inplace_change('Temp/word/document.xml','VAL_TCP_B',tcp[i]['b']) 
-            inplace_change('Temp/word/document.xml','VAL_TCP_C',tcp[i]['c'])  
+            inplace_change('Temp/word/document.xml','TCP_A',tcp[i]['a']) 
+            inplace_change('Temp/word/document.xml','TCP_B',tcp[i]['b']) 
+            inplace_change('Temp/word/document.xml','TCP_C',tcp[i]['c'])  
 
         if len(base[i]['x'])>0:
-            inplace_change('Temp/word/document.xml','Base_XX',base[i]['name'])
-            inplace_change('Temp/word/document.xml','V_BASE_X',tcp[i]['x']) 
-            inplace_change('Temp/word/document.xml','V_BASE_Y',tcp[i]['y']) 
-            inplace_change('Temp/word/document.xml','V_BASE_Z',tcp[i]['z'])   
+            
+            inplace_change('Temp/word/document.xml','BASE_N',base[i]['name'])
+            inplace_change('Temp/word/document.xml','BASE_X',base[i]['x']) 
+            inplace_change('Temp/word/document.xml','BASE_Y',base[i]['y']) 
+            inplace_change('Temp/word/document.xml','BASE_Z',base[i]['z'])   
 
-            inplace_change('Temp/word/document.xml','V_BASE_A',tcp[i]['a']) 
-            inplace_change('Temp/word/document.xml','V_BASE_B',tcp[i]['b']) 
-            inplace_change('Temp/word/document.xml','V_BASE_C',tcp[i]['c']) 
+            inplace_change('Temp/word/document.xml','BASE_A',base[i]['a']) 
+            inplace_change('Temp/word/document.xml','BASE_B',base[i]['b']) 
+            inplace_change('Temp/word/document.xml','BASE_C',base[i]['c']) 
 
-    inplace_change('Temp/word/document.xml','Tool_XX_TCP',)
-    inplace_change('Temp/word/document.xml','Base_XX',)
+    inplace_change('Temp/word/document.xml','TCP_N',)
+    inplace_change('Temp/word/document.xml','BASE_N',)
 
-    inplace_change('Temp/word/document.xml','VAL_TCP_X',) 
-    inplace_change('Temp/word/document.xml','VAL_TCP_Y',) 
-    inplace_change('Temp/word/document.xml','VAL_TCP_Z',)   
-    inplace_change('Temp/word/document.xml','VAL_TCP_A',) 
-    inplace_change('Temp/word/document.xml','VAL_TCP_B',) 
-    inplace_change('Temp/word/document.xml','VAL_TCP_C',)   
+    inplace_change('Temp/word/document.xml','TCP_X') 
+    inplace_change('Temp/word/document.xml','TCP_Y') 
+    inplace_change('Temp/word/document.xml','TCP_Z')   
+    inplace_change('Temp/word/document.xml','TCP_A') 
+    inplace_change('Temp/word/document.xml','TCP_B') 
+    inplace_change('Temp/word/document.xml','TCP_C')   
 
-    inplace_change('Temp/word/document.xml','V_BASE_X',tcp[i]['x']) 
-    inplace_change('Temp/word/document.xml','V_BASE_Y',tcp[i]['y']) 
-    inplace_change('Temp/word/document.xml','V_BASE_Z',tcp[i]['z'])   
-
-    inplace_change('Temp/word/document.xml','V_BASE_A',tcp[i]['a']) 
-    inplace_change('Temp/word/document.xml','V_BASE_B',tcp[i]['b']) 
-    inplace_change('Temp/word/document.xml','V_BASE_C',tcp[i]['c']) 
+    inplace_change('Temp/word/document.xml','BASE_X',) 
+    inplace_change('Temp/word/document.xml','BASE_Y',) 
+    inplace_change('Temp/word/document.xml','BASE_Z',)   
+    inplace_change('Temp/word/document.xml','BASE_A',) 
+    inplace_change('Temp/word/document.xml','BASE_B',) 
+    inplace_change('Temp/word/document.xml','BASE_C',) 
 
 
     backup = zipfile.ZipFile(filename+'.docx', 'w')
@@ -180,7 +181,7 @@ backupsdir = 'Backup'
 files = os.listdir(backupsdir)
 
 for filename in files:
-    if ('.zip' in filename) and (len("gg") >5):
+    if ('.zip' in filename): #and (len("gg") >5)
         print('Working on %s'%(filename))
         backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
         name=filename.replace('.zip','')
@@ -206,7 +207,7 @@ for filename in files:
                             
             if line[0:9]=='BASE_DATA':
                 fnum=int(line[10:line.find(']')])
-                if (fnum<32 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
+                if (fnum<64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
                     base[fnum]=get_coords(line)
                     base[fnum]['name']=get_name(backup,fnum,'BASE')
 
@@ -214,15 +215,15 @@ for filename in files:
         write(name)
 
 
-# print('TOOLS')
-# for i in range(64):
-#     if len(tcp[i]['x']) > 0:
-#         print(tcp[i])
+print('TOOLS')
+for i in range(64):
+    if len(tcp[i]['x']) > 0:
+        print(tcp[i])
 
-# print('BASE')
-# for i in range(64):
-#     if len(base[i]['x']) > 0:
-#         print(base[i])
+print('BASE')
+for i in range(64):
+    if len(base[i]['x']) > 0:
+        print(base[i])
 
 # guebergabe={}
 
@@ -234,7 +235,8 @@ for filename in files:
 
 print("--- %s seconds ---" % (time.time() - start_time))
 
-
+print("Everything is Done. This open will close in 3 sec")
+time.sleep(3)
     
 
 # class AppWindow(QMainWindow):

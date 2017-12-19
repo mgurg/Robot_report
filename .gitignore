@@ -12,3 +12,8 @@ setup.py
 Output/template.fodg
 *.ui
 .vscode/settings.json
+*.fodg
+*._dat
+*.exe
+*.ico
+*.txt
