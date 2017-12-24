@@ -17,3 +17,4 @@ Output/template.fodg
 *.exe
 *.ico
 *.txt
+ToCompile/_compile.bat

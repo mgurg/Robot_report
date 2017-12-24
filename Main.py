@@ -62,7 +62,6 @@ def get_name(path, n,tcp):
     for sline in sfile.readlines():
         sline=sline.decode("utf-8") 
         if sline[0:i]=='%s_NAME[%s,]'%(tcp,n):
-            print(sline)
             return sline[i+1:].replace('"','').strip()
     return ''
 
@@ -123,6 +122,8 @@ def write(filename):
 
     for i in range(64):
         if len(tcp[i]['x'])>0:
+            inplace_change('Temp/word/document.xml','T_ID',str(i))
+
             inplace_change('Temp/word/document.xml','TCP_N',tcp[i]['name'])
 
             inplace_change('Temp/word/document.xml','TCP_X',tcp[i]['x']) 
@@ -134,7 +135,8 @@ def write(filename):
             inplace_change('Temp/word/document.xml','TCP_C',tcp[i]['c'])  
 
         if len(base[i]['x'])>0:
-            
+            inplace_change('Temp/word/document.xml','B_ID',str(i))
+
             inplace_change('Temp/word/document.xml','BASE_N',base[i]['name'])
             inplace_change('Temp/word/document.xml','BASE_X',base[i]['x']) 
             inplace_change('Temp/word/document.xml','BASE_Y',base[i]['y']) 
@@ -145,15 +147,16 @@ def write(filename):
             inplace_change('Temp/word/document.xml','BASE_C',base[i]['c']) 
 
     inplace_change('Temp/word/document.xml','TCP_N',)
-    inplace_change('Temp/word/document.xml','BASE_N',)
-
+    inplace_change('Temp/word/document.xml','T_ID',)
     inplace_change('Temp/word/document.xml','TCP_X') 
     inplace_change('Temp/word/document.xml','TCP_Y') 
     inplace_change('Temp/word/document.xml','TCP_Z')   
     inplace_change('Temp/word/document.xml','TCP_A') 
     inplace_change('Temp/word/document.xml','TCP_B') 
-    inplace_change('Temp/word/document.xml','TCP_C')   
+    inplace_change('Temp/word/document.xml','TCP_C')  
 
+    inplace_change('Temp/word/document.xml','BASE_N',)
+    inplace_change('Temp/word/document.xml','B_ID',)
     inplace_change('Temp/word/document.xml','BASE_X',) 
     inplace_change('Temp/word/document.xml','BASE_Y',) 
     inplace_change('Temp/word/document.xml','BASE_Z',)   
@@ -177,8 +180,10 @@ def write(filename):
 
 start_time = time.time()
 
-backupsdir = 'Backup'
+backupsdir = 'Backups'
 files = os.listdir(backupsdir)
+
+
 
 for filename in files:
     if ('.zip' in filename): #and (len("gg") >5)
@@ -215,15 +220,15 @@ for filename in files:
         write(name)
 
 
-print('TOOLS')
-for i in range(64):
-    if len(tcp[i]['x']) > 0:
-        print(tcp[i])
+# print('TOOLS')
+# for i in range(64):
+#     if len(tcp[i]['x']) > 0:
+#         print(tcp[i])
 
-print('BASE')
-for i in range(64):
-    if len(base[i]['x']) > 0:
-        print(base[i])
+# print('BASE')
+# for i in range(64):
+#     if len(base[i]['x']) > 0:
+#         print(base[i])
 
 # guebergabe={}
 
@@ -232,10 +237,13 @@ for i in range(64):
 #     print(guebergabe[i])
 
 
-
-print("--- %s seconds ---" % (time.time() - start_time))
-
-print("Everything is Done. This open will close in 3 sec")
+print("")
+print("----- %s seconds -----" % (time.time() - start_time))
+print("Everything is done. This window will close in 3 sec")
+print("")
+print("=================================================")
+print("Robot Report v0.1. Check for updates at:")
+print("        www.fabryka-robotow.pl")
 time.sleep(3)
     
 
