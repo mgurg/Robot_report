@@ -115,7 +115,9 @@ def inplace_change(filename, old_string, new_string=''):
             s = re.sub(old_string, new_string, s, 1)
         f.write(s)
 
-def write(filename):
+# Not Working - problem with passing distionary values: tcp and base
+
+def write(filename, tcp, base):
     backup=zipfile.ZipFile('ReportTemplate/OLP.docx','r')
     backup.extractall('Temp/')
     backup.close
@@ -178,87 +180,146 @@ def write(filename):
 # MAIN PROGRAM
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX        
 
-start_time = time.time()
 
-backupsdir = 'Backups'
-files = os.listdir(backupsdir)
+def ExportToolBase():
+
+	start_time = time.time()
+	
+	backupsdir = 'Backups'
+	files = os.listdir(backupsdir)
+	
+	for filename in files:
+		if ('.zip' in filename): #and (len("gg") >5)
+			print('Working on %s'%(filename))
+			backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
+			name=filename.replace('.zip','')
+
+			print(name)
+	
+			tcp={}
+			base={}
+			#programs={}
+	
+			for i in range(64):
+				tcp[i]=empty_coords()
+				base[i]=empty_coords()
+	
+			searchfile = backup.open('KRC/R1/System/$config.dat','r')
+			
+			for line in searchfile.readlines():
+				line = line.decode("utf-8") 
+				if line[0:9]=='TOOL_DATA':  #search for TOOL_DATA
+					fnum=int(line[10:line.find(']')]) # obtain Tool No
+					if (fnum<=64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
+						tcp[fnum]=get_coords(line)
+						tcp[fnum]['name']=get_name(backup,fnum,'TOOL')
+								
+				if line[0:9]=='BASE_DATA':
+					fnum=int(line[10:line.find(']')])
+					if (fnum<64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
+						base[fnum]=get_coords(line)
+						base[fnum]['name']=get_name(backup,fnum,'BASE')
+	
+			searchfile.close()
+
+			print('TOOLS')
+			for i in range(64):
+				if len(tcp[i]['x']) > 0:
+					print(tcp[i])
+	
+			print('BASE')
+			for i in range(64):
+				if len(base[i]['x']) > 0:
+					print(base[i])
+
+			#write(name,tcp,base)
+	
+	backup=zipfile.ZipFile('ReportTemplate/OLP.docx','r')
+	backup.extractall('Temp/')
+	backup.close
+
+	for i in range(64):
+		if len(tcp[i]['x'])>0:
+			inplace_change('Temp/word/document.xml','T_ID',str(i))
+
+			inplace_change('Temp/word/document.xml','TCP_N',tcp[i]['name'])
+
+			inplace_change('Temp/word/document.xml','TCP_X',tcp[i]['x']) 
+			inplace_change('Temp/word/document.xml','TCP_Y',tcp[i]['y']) 
+			inplace_change('Temp/word/document.xml','TCP_Z',tcp[i]['z'])   
+
+			inplace_change('Temp/word/document.xml','TCP_A',tcp[i]['a']) 
+			inplace_change('Temp/word/document.xml','TCP_B',tcp[i]['b']) 
+			inplace_change('Temp/word/document.xml','TCP_C',tcp[i]['c'])  
+
+		if len(base[i]['x'])>0:
+			inplace_change('Temp/word/document.xml','B_ID',str(i))
+
+			inplace_change('Temp/word/document.xml','BASE_N',base[i]['name'])
+			inplace_change('Temp/word/document.xml','BASE_X',base[i]['x']) 
+			inplace_change('Temp/word/document.xml','BASE_Y',base[i]['y']) 
+			inplace_change('Temp/word/document.xml','BASE_Z',base[i]['z'])   
+
+			inplace_change('Temp/word/document.xml','BASE_A',base[i]['a']) 
+			inplace_change('Temp/word/document.xml','BASE_B',base[i]['b']) 
+			inplace_change('Temp/word/document.xml','BASE_C',base[i]['c']) 
+
+	inplace_change('Temp/word/document.xml','TCP_N',)
+	inplace_change('Temp/word/document.xml','T_ID',)
+	inplace_change('Temp/word/document.xml','TCP_X') 
+	inplace_change('Temp/word/document.xml','TCP_Y') 
+	inplace_change('Temp/word/document.xml','TCP_Z')   
+	inplace_change('Temp/word/document.xml','TCP_A') 
+	inplace_change('Temp/word/document.xml','TCP_B') 
+	inplace_change('Temp/word/document.xml','TCP_C')  
+
+	inplace_change('Temp/word/document.xml','BASE_N',)
+	inplace_change('Temp/word/document.xml','B_ID',)
+	inplace_change('Temp/word/document.xml','BASE_X',) 
+	inplace_change('Temp/word/document.xml','BASE_Y',) 
+	inplace_change('Temp/word/document.xml','BASE_Z',)   
+	inplace_change('Temp/word/document.xml','BASE_A',) 
+	inplace_change('Temp/word/document.xml','BASE_B',) 
+	inplace_change('Temp/word/document.xml','BASE_C',) 
 
 
+	backup = zipfile.ZipFile(filename+'.docx', 'w')
+	for folder, subfolders, files in os.walk('Temp\\'):
+ 
+		for file in files:
+			backup.write(os.path.join(folder, file), os.path.relpath(os.path.join(folder,file), 'Temp\\'), compress_type = zipfile.ZIP_DEFLATED)
+	backup.close()
 
-for filename in files:
-    if ('.zip' in filename): #and (len("gg") >5)
-        print('Working on %s'%(filename))
-        backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
-        name=filename.replace('.zip','')
-
-
-        tcp={}
-        base={}
-        programs={}
-
-        for i in range(64):
-            tcp[i]=empty_coords()
-            base[i]=empty_coords()
-
-        searchfile = backup.open('KRC/R1/System/$config.dat','r')
-        
-        for line in searchfile.readlines():
-            line = line.decode("utf-8") 
-            if line[0:9]=='TOOL_DATA':  #search for TOOL_DATA
-                fnum=int(line[10:line.find(']')]) # obtain Tool No
-                if (fnum<=64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
-                    tcp[fnum]=get_coords(line)
-                    tcp[fnum]['name']=get_name(backup,fnum,'TOOL')
-                            
-            if line[0:9]=='BASE_DATA':
-                fnum=int(line[10:line.find(']')])
-                if (fnum<64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
-                    base[fnum]=get_coords(line)
-                    base[fnum]['name']=get_name(backup,fnum,'BASE')
-
-        searchfile.close()
-        write(name)
-
-
-# print('TOOLS')
-# for i in range(64):
-#     if len(tcp[i]['x']) > 0:
-#         print(tcp[i])
-
-# print('BASE')
-# for i in range(64):
-#     if len(base[i]['x']) > 0:
-#         print(base[i])
-
-# guebergabe={}
-
-# print('GU')
-# for i in range(30):
-#     print(guebergabe[i])
+	shutil.rmtree('Temp/') 
+	
+	
+	# print('TOOLS')
+	# for i in range(64):
+	#     if len(tcp[i]['x']) > 0:
+	#         print(tcp[i])
+	
+	# print('BASE')
+	# for i in range(64):
+	#     if len(base[i]['x']) > 0:
+	#         print(base[i])
+	
+	# guebergabe={}
+	
+	# print('GU')
+	# for i in range(30):
+	#     print(guebergabe[i])
+	
+	print("")
+	print("----- %s seconds -----" % (time.time() - start_time))
+	print("Everything is done. This window will close in 3 sec")
+	print("")
+	print("=================================================")
+	print("Robot Report v0.1. Check for updates at:")
+	print("        www.fabryka-robotow.pl")
+	time.sleep(3)
 
 
-print("")
-print("----- %s seconds -----" % (time.time() - start_time))
-print("Everything is done. This window will close in 3 sec")
-print("")
-print("=================================================")
-print("Robot Report v0.1. Check for updates at:")
-print("        www.fabryka-robotow.pl")
-time.sleep(3)
-    
-
-# class AppWindow(QMainWindow):
-#    def __init__(self):
-#        super().__init__()
-#        self.ui = Ui_MainWindow()
-#        self.ui.setupUi(self)
-#        self.show() 
-        
-
-#app = QApplication(sys.argv)
-#w = AppWindow()
-#w.show()
-#sys.exit(app.exec_())
-    
-    
+#programs={}  
+  
+ExportToolBase()    
     
