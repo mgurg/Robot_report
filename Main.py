@@ -4,6 +4,7 @@
 """
 Author: Michal Gurgul
 Website: -
+Version: 0.1
 Last edited: August 2017
 """
 
