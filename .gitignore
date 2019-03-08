@@ -20,3 +20,6 @@ Output/template.fodg
 ToCompile/_compile.bat
 ToCompile/AKE_compile.bat
 ToCompile/FR_compile.bat
+*.pyc
+.vscode/.ropeproject/config.py
+.vscode/.ropeproject/objectdb
