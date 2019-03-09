@@ -22,6 +22,10 @@ import time
 import re
 import shutil
 
+#TODO:
+    # Inactive button
+    # Staus LBl
+
 class RobotReport(QWidget, Ui_Widget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -231,6 +235,9 @@ def calculations(obj):
     for filename in files:
         if ('.zip' in filename): #and (len("gg") >5)
             print('Working on %s'%(filename))
+
+            #obj.StatusLbl.setText('results')
+
             backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
             name=filename.replace('.zip','')
 
@@ -288,7 +295,7 @@ def calculations(obj):
     print("Robot Report v0.1. Check for updates at:")
     print("        www.fabryka-robotow.pl")
     time.sleep(3)
-    obj.wynikEdt.setText('results') 
+    #obj.wynikEdt.setText('results') 
 
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    
@@ -297,5 +304,5 @@ if __name__ == '__main__':
     import sys
 
     app = QApplication(sys.argv)
-    okno = RobotReport()
+    Form = RobotReport()
     sys.exit(app.exec_())
