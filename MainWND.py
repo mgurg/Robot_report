@@ -10,7 +10,7 @@ from PyQt5.QtCore import Qt
 import os
 
 class Ui_Widget(object):
-    def interfejs(self):
+    def setupUi(self):
         
         # etykiety
         # etykieta1 = QLabel("Backups:", self)
