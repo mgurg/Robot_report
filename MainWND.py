@@ -40,17 +40,20 @@ class Ui_Widget(object):
         #odejmijBtn = QPushButton("&Remove", self)
         #dzielBtn = QPushButton("&Multiply", self)
         #mnozBtn = QPushButton("&Division", self)
-        reportBtn = QPushButton("&Generate TOOL/BASE report", self)
+        self.reportBtn = QPushButton("&Generate TOOL/BASE report", self)
         koniecBtn = QPushButton("&Close app", self)
         koniecBtn.resize(koniecBtn.sizeHint())
 
         # Labels
-        StatusLbl = QLabel()
-        StatusLbl.setText('''<a href='https://roboticsbook.com/RobotReport/'>RobotReport website - check for updates</a>''') 
-        StatusLbl.setOpenExternalLinks(True)
+        wwwLbl = QLabel()
+        wwwLbl.setText('''<a href='https://roboticsbook.com/RobotReport/'>RobotReport website - check for updates</a>''') 
+        wwwLbl.setOpenExternalLinks(True)
 
-        DescLbl = QLabel()
-        DescLbl.setText("Generate reports from KUKA robot backups (*.zip)") 
+        descLbl = QLabel()
+        descLbl.setText("Generate reports from KUKA robot backups (*.zip)") 
+
+        self.statusLbl = QLabel("Status", self)
+
 
         ukladH = QHBoxLayout()
         #ukladH.addWidget(dodajBtn)
@@ -61,20 +64,21 @@ class Ui_Widget(object):
         #ukladT.addLayout(ukladH, 2, 0, 1, 3)
 
 
-        ukladT.addWidget(DescLbl, 2, 0, 1, 3)
-        ukladT.addWidget(reportBtn, 3, 0, 1, 3)
+        ukladT.addWidget(descLbl, 1, 0, 1, 3)
+        ukladT.addWidget(self.statusLbl, 2, 0, 1, 3)
+        ukladT.addWidget(self.reportBtn, 3, 0, 1, 3)
         ukladT.addWidget(koniecBtn, 4, 0, 1, 3)
-        ukladT.addWidget(StatusLbl, 5,0,1,3)
+        ukladT.addWidget(wwwLbl, 5,0,1,3)
 
         # przypisanie utworzonego układu do okna
         self.setLayout(ukladT)
 
 
-        reportBtn.clicked.connect(self.generateReport)
+        self.reportBtn.clicked.connect(self.generateReport)
         koniecBtn.clicked.connect(self.koniec)
         
         #self.liczba1Edt.setFocus()
         self.setGeometry(20, 20, 300, 100)
         self.setWindowIcon(QIcon('Robot_Icon.png'))
-        self.setWindowTitle("Robot Report V0.2")
+        self.setWindowTitle("Robot Report v0.2")
         self.show()

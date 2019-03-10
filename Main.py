@@ -25,6 +25,8 @@ import shutil
 #TODO:
     # Inactive button
     # Staus LBl
+    # https://stackoverflow.com/questions/55090621/pyqt-how-to-update-qlabel-text-access-to-qt-widgets-from-another-python-file-f
+    # https://stackoverflow.com/questions/2709821/what-is-the-purpose-of-self
 
 class RobotReport(QWidget, Ui_Widget):
     def __init__(self, parent=None):
@@ -38,7 +40,12 @@ class RobotReport(QWidget, Ui_Widget):
         self.close()
 
     def generateReport(self):
+        self.reportBtn.setEnabled(False)
+        self.reportBtn.repaint()
+
         calculations(self) # https://stackoverflow.com/questions/40027221/how-to-connect-pyqt-signal-to-external-function/40027367#40027367
+        
+        self.reportBtn.setEnabled(True)
 
     # przechwycenie zamkniecia - MessageBox
     def closeEvent(self, event):
@@ -236,7 +243,7 @@ def calculations(obj):
         if ('.zip' in filename): #and (len("gg") >5)
             print('Working on %s'%(filename))
 
-            # object.StatusLbl.setText('results') https://stackoverflow.com/questions/45581288/accessing-ui-elements-from-another-class-in-python
+            obj.statusLbl.setText('Working on %s'%(filename))
 
             backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
             name=filename.replace('.zip','')
@@ -294,7 +301,7 @@ def calculations(obj):
     print("=================================================")
     print("Robot Report v0.1. Check for updates at:")
     print("        www.fabryka-robotow.pl")
-    time.sleep(3)
+    #time.sleep(3)
     #obj.wynikEdt.setText('results') 
 
 
