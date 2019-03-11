@@ -21,3 +21,4 @@ ToCompile/_compile.bat
 ToCompile/AKE_compile.bat
 ToCompile/FR_compile.bat
 __pycache__/Gui.cpython-36.pyc
+__pycache__/MainWND.cpython-36.pyc
