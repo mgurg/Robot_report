@@ -9,11 +9,7 @@ Last edited: March 2019
 """
 
 from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QLabel, QGridLayout
-from PyQt5.QtWidgets import QLineEdit, QPushButton, QHBoxLayout
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import Qt
 from MainWND import Ui_Widget
 
 import sys
@@ -34,17 +30,17 @@ class RobotReport(QWidget, Ui_Widget):
 
         self.setupUi()
 
-
     # Obsługa zamkniecia - przycisk koniec
     def koniec(self):
         self.close()
 
     def generateReport(self):
         self.reportBtn.setEnabled(False)
+        # self.reportBtn.update()
         self.reportBtn.repaint()
 
         calculations(self) # https://stackoverflow.com/questions/40027221/how-to-connect-pyqt-signal-to-external-function/40027367#40027367
-        
+
         self.reportBtn.setEnabled(True)
 
     # przechwycenie zamkniecia - MessageBox
@@ -244,6 +240,7 @@ def calculations(obj):
             print('Working on %s'%(filename))
 
             obj.statusLbl.setText('Working on %s'%(filename))
+            obj.statusLbl.repaint()
 
             backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
             name=filename.replace('.zip','')
@@ -312,7 +309,4 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     Form = RobotReport()
-
-
-
     sys.exit(app.exec_())
