@@ -4,7 +4,7 @@
 """
 Author: Michal Gurgul
 Website: -
-Version: 0.2 dev
+Version: 0.3 dev
 Last edited: March 2019
 """
 
@@ -19,10 +19,7 @@ import re
 import shutil
 
 #TODO:
-    # Inactive button
-    # Staus LBl
-    # https://stackoverflow.com/questions/55090621/pyqt-how-to-update-qlabel-text-access-to-qt-widgets-from-another-python-file-f
-    # https://stackoverflow.com/questions/2709821/what-is-the-purpose-of-self
+
 
 class RobotReport(QWidget, Ui_Widget):
     def __init__(self, parent=None):
@@ -256,6 +253,14 @@ def calculations(obj):
 
             searchfile = backup.open('KRC/R1/System/$config.dat','r')
             
+            #   REgexp example
+            #   old method performance: ~0,92 - 1.0054 sec
+            #   https://stackoverflow.com/questions/6186938/python-how-to-use-regexp-on-file-line-by-line-in-python
+
+            #otp = searchfile
+            #data = otp.read()
+            #print(data)
+
             for line in searchfile.readlines():
                 line = line.decode("utf-8") 
                 if line[0:9]=='TOOL_DATA':  #search for TOOL_DATA
@@ -271,13 +276,14 @@ def calculations(obj):
                         base[fnum]['name']=get_name(backup,fnum,'BASE')
 
             searchfile.close()
+            
             write(name)
 
 
-    # print('TOOLS')
-    # for i in range(64):
-    #     if len(tcp[i]['x']) > 0:
-    #         print(tcp[i])
+    print('TOOLS')
+    for i in range(64):
+        if len(tcp[i]['x']) > 0:
+            print(tcp[i])
 
     # print('BASE')
     # for i in range(64):
