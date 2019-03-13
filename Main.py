@@ -33,7 +33,6 @@ class RobotReport(QWidget, Ui_Widget):
 
     def generateReport(self):
         self.reportBtn.setEnabled(False)
-        # self.reportBtn.update()
         self.reportBtn.repaint()
 
         calculations(self) # https://stackoverflow.com/questions/40027221/how-to-connect-pyqt-signal-to-external-function/40027367#40027367
@@ -62,55 +61,43 @@ class RobotReport(QWidget, Ui_Widget):
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 def calculations(obj):
-    # Create empty table (x, y, z, a, b, c, name)
-    def empty_coords():
+
+    def get_coords2(line):
         coords={}
-        coords['x']=''
-        coords['y']=''
-        coords['z']=''
-        coords['a']=''
-        coords['b']=''
-        coords['c']=''
-        coords['name']=''
+
+    #  X\s(.*?),|Y\s(.*?),|Z\s(.*?),|A\s(.*?),|B\s(.*?),|C\s(.*?)}
+    #XYZABC = re.findall('X\s(.*?),|Y\s(.*?),|Z\s(.*?),|A\s(.*?),|B\s(.*?),|C\s(.*?)}',line)
+    #print(XYZABC)        
+    #X = str(XYZABC.group(1))  
+    #Y = str(XYZABC.group(2)) 
+    #print (X + '   '+ Y)
+
+        XX = re.search("X\s(.*?),", line)
+        YY = re.search("Y\s(.*?),", line)
+        ZZ = re.search("Z\s(.*?),", line)
+        AA = re.search("A\s(.*?),", line)
+        BB = re.search("B\s(.*?),", line)
+        CC = re.search("C\s(.*?)}", line)
+
+        coords['x']=str(XX.group(1))
+        coords['y']=str(YY.group(1))
+        coords['z']=str(ZZ.group(1))
+        coords['a']=str(AA.group(1))
+        coords['b']=str(BB.group(1))
+        coords['c']=str(CC.group(1))
         return coords
 
+    def get_name2(line):
+        NN = re.search('[\"](\w+)',line)    
+        return str(NN.group(1))
 
-    # Fill table with values
-    def get_coords(line):
-        coords={}
-        line=line[13:].replace('}',',')
-        coords['x']=get_coord(line,'X')
-        coords['y']=get_coord(line,'Y')
-        coords['z']=get_coord(line,'Z')
-        coords['a']=get_coord(line,'A')
-        coords['b']=get_coord(line,'B')
-        coords['c']=get_coord(line,'C')
-        return coords
-
-    # Find sign: X, Y, Z etc. in line  
-    # Search for value till "," sign
-    # Return round value 
-    def get_coord(line,coord):
-        pos=line.find(coord)+len(coord)
-        return round_coord(line[pos:line[pos:].find(',')+pos])
 
     def get_jcoord(line,coord):
         pos=line.find(coord)+len(coord)
         return line[pos:line[pos:].find(',')+pos]
 
-    def round_coord(text):
-        return str(round(float(text),3))
-
-    def get_name(path, n,tcp):
-
-        i = len('%s_NAME[%s,]'%(tcp,n))
-
-        sfile = path.open('KRC/R1/System/$config.dat','r')
-        for sline in sfile.readlines():
-            sline=sline.decode("utf-8") 
-            if sline[0:i]=='%s_NAME[%s,]'%(tcp,n):
-                return sline[i+1:].replace('"','').strip()
-        return ''
+    # def round_coord(text):
+    #     return str(round(float(text),3))
 
     def empty_guebergabe():
         guebergabe={}
@@ -167,7 +154,7 @@ def calculations(obj):
         backup.extractall('Temp/')
         backup.close
 
-        for i in range(64):
+        for i in tcp:
             if len(tcp[i]['x'])>0:
                 inplace_change('Temp/word/document.xml','T_ID',str(i))
 
@@ -181,6 +168,7 @@ def calculations(obj):
                 inplace_change('Temp/word/document.xml','TCP_B',tcp[i]['b']) 
                 inplace_change('Temp/word/document.xml','TCP_C',tcp[i]['c'])  
 
+        for i in base:
             if len(base[i]['x'])>0:
                 inplace_change('Temp/word/document.xml','B_ID',str(i))
 
@@ -230,8 +218,6 @@ def calculations(obj):
     backupsdir = 'Backups'
     files = os.listdir(backupsdir)
 
-
-
     for filename in files:
         if ('.zip' in filename): #and (len("gg") >5)
             print('Working on %s'%(filename))
@@ -242,59 +228,48 @@ def calculations(obj):
             backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
             name=filename.replace('.zip','')
 
-
             tcp={}
             base={}
-            programs={}
-
-            for i in range(64):
-                tcp[i]=empty_coords()
-                base[i]=empty_coords()
 
             searchfile = backup.open('KRC/R1/System/$config.dat','r')
             
             #   REgexp example
             #   old method performance: ~0,92 - 1.0054 sec
-            #   https://stackoverflow.com/questions/6186938/python-how-to-use-regexp-on-file-line-by-line-in-python
 
-            #otp = searchfile
-            #data = otp.read()
-            #print(data)
+            data = searchfile.read()
+            my_string = data.decode('utf-8')
 
-            for line in searchfile.readlines():
-                line = line.decode("utf-8") 
-                if line[0:9]=='TOOL_DATA':  #search for TOOL_DATA
-                    fnum=int(line[10:line.find(']')]) # obtain Tool No
-                    if (fnum<=64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
-                        tcp[fnum]=get_coords(line)
-                        tcp[fnum]['name']=get_name(backup,fnum,'TOOL')
-                                
-                if line[0:9]=='BASE_DATA':
-                    fnum=int(line[10:line.find(']')])
-                    if (fnum<64 and not ('{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}' in line)):
-                        base[fnum]=get_coords(line)
-                        base[fnum]['name']=get_name(backup,fnum,'BASE')
+            TD = re.findall("TOOL_DATA.*",my_string)
+            TN = re.findall("TOOL_NAME.*",my_string)
+            BD = re.findall("BASE_DATA.*",my_string)
+            BN = re.findall("BASE_NAME.*",my_string)
 
             searchfile.close()
+
+            for j in range(1, len(TD)):
+                result = str(TD[j]).find("{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}")
+                if result < 0:
+                    tcp[j] = get_coords2(TD[j])
+                    tcp[j]['name'] = get_name2(TN[j])
+
+            for j in range(1, len(BD)):
+                result = str(BD[j]).find("{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}")
+                if result < 0:
+                    base[j] = get_coords2(BD[j])
+                    base[j]['name'] = get_name2(BN[j])        
             
             write(name)
 
 
-    print('TOOLS')
-    for i in range(64):
-        if len(tcp[i]['x']) > 0:
-            print(tcp[i])
+    # print('TOOLS')
+    # for index in tcp:
+    #     print(index)
+    #     print(tcp[index])
 
     # print('BASE')
-    # for i in range(64):
-    #     if len(base[i]['x']) > 0:
-    #         print(base[i])
-
-    # guebergabe={}
-
-    # print('GU')
-    # for i in range(30):
-    #     print(guebergabe[i])
+    # for index in base:
+    #     print(index)
+    #     print(base[index])
 
 
     print("")
