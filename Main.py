@@ -57,7 +57,6 @@ class RobotReport(QWidget, Ui_Widget):
         if e.key() == Qt.Key_Escape:
             self.close()
 
-
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 def calculations(obj):
@@ -65,12 +64,12 @@ def calculations(obj):
     def get_coords2(line):
         coords={}
 
-    #  X\s(.*?),|Y\s(.*?),|Z\s(.*?),|A\s(.*?),|B\s(.*?),|C\s(.*?)}
-    #XYZABC = re.findall('X\s(.*?),|Y\s(.*?),|Z\s(.*?),|A\s(.*?),|B\s(.*?),|C\s(.*?)}',line)
-    #print(XYZABC)        
-    #X = str(XYZABC.group(1))  
-    #Y = str(XYZABC.group(2)) 
-    #print (X + '   '+ Y)
+        #  X\s(.*?),|Y\s(.*?),|Z\s(.*?),|A\s(.*?),|B\s(.*?),|C\s(.*?)}
+        #XYZABC = re.findall('X\s(.*?),|Y\s(.*?),|Z\s(.*?),|A\s(.*?),|B\s(.*?),|C\s(.*?)}',line)
+        #print(XYZABC)        
+        #X = str(XYZABC.group(1))  
+        #Y = str(XYZABC.group(2)) 
+        #print (X + '   '+ Y)
 
         XX = re.search("X\s(.*?),", line)
         YY = re.search("Y\s(.*?),", line)
@@ -91,37 +90,36 @@ def calculations(obj):
         NN = re.search('[\"](\w+)',line)    
         return str(NN.group(1))
 
-
-    def get_jcoord(line,coord):
-        pos=line.find(coord)+len(coord)
-        return line[pos:line[pos:].find(',')+pos]
+    # def get_jcoord(line,coord):
+    #     pos=line.find(coord)+len(coord)
+    #     return line[pos:line[pos:].find(',')+pos]
 
     # def round_coord(text):
     #     return str(round(float(text),3))
 
-    def empty_guebergabe():
-        guebergabe={}
-        guebergabe['A1']=''
-        guebergabe['A2']=''
-        guebergabe['A3']=''
-        guebergabe['A4']=''
-        guebergabe['A5']=''
-        guebergabe['A6']=''
-        guebergabe['E1']=''
-        guebergabe['name']=''
-        return guebergabe
+    # def empty_guebergabe():
+    #     guebergabe={}
+    #     guebergabe['A1']=''
+    #     guebergabe['A2']=''
+    #     guebergabe['A3']=''
+    #     guebergabe['A4']=''
+    #     guebergabe['A5']=''
+    #     guebergabe['A6']=''
+    #     guebergabe['E1']=''
+    #     guebergabe['name']=''
+    #     return guebergabe
 
-    def get_guebergabe(line):
-        guebergabe={}
-        #line=line[13:].replace('}',',')
-        guebergabe['A1']=get_jcoord(line,'A1')
-        guebergabe['A2']=get_jcoord(line,'A2')
-        guebergabe['A3']=get_jcoord(line,'A3')
-        guebergabe['A4']=get_jcoord(line,'A4')
-        guebergabe['A5']=get_jcoord(line,'A5')
-        guebergabe['A6']=get_jcoord(line,'A6')
-        guebergabe['E1']=get_jcoord(line,'E1')
-        return guebergabe
+    # def get_guebergabe(line):
+    #     guebergabe={}
+    #     #line=line[13:].replace('}',',')
+    #     guebergabe['A1']=get_jcoord(line,'A1')
+    #     guebergabe['A2']=get_jcoord(line,'A2')
+    #     guebergabe['A3']=get_jcoord(line,'A3')
+    #     guebergabe['A4']=get_jcoord(line,'A4')
+    #     guebergabe['A5']=get_jcoord(line,'A5')
+    #     guebergabe['A6']=get_jcoord(line,'A6')
+    #     guebergabe['E1']=get_jcoord(line,'E1')
+    #     return guebergabe
 
     # guebergabe={}
     # filename = "Backup/user_global.dat"
@@ -143,8 +141,7 @@ def calculations(obj):
         with open(filename, 'w') as f:
             #print 'Changing "{old_string}" to "{new_string}" in {filename}'
             if len(new_string) == 0:
-                s = re.sub(old_string, "", s)
-                #s = s.replace(old_string, '') 
+                s = re.sub("T_ID|TCP_N|TCP_X|TCP_Y|TCP_Z|TCP_A|TCP_B|TCP_C|B_ID|BASE_N|BASE_X|BASE_Y|BASE_Z|BASE_A|BASE_B|BASE_C", "", s) #clear all unused
             else:
                 s = re.sub(old_string, new_string, s, 1)
             f.write(s)
@@ -159,11 +156,9 @@ def calculations(obj):
                 inplace_change('Temp/word/document.xml','T_ID',str(i))
 
                 inplace_change('Temp/word/document.xml','TCP_N',tcp[i]['name'])
-
                 inplace_change('Temp/word/document.xml','TCP_X',tcp[i]['x']) 
                 inplace_change('Temp/word/document.xml','TCP_Y',tcp[i]['y']) 
                 inplace_change('Temp/word/document.xml','TCP_Z',tcp[i]['z'])   
-
                 inplace_change('Temp/word/document.xml','TCP_A',tcp[i]['a']) 
                 inplace_change('Temp/word/document.xml','TCP_B',tcp[i]['b']) 
                 inplace_change('Temp/word/document.xml','TCP_C',tcp[i]['c'])  
@@ -176,33 +171,15 @@ def calculations(obj):
                 inplace_change('Temp/word/document.xml','BASE_X',base[i]['x']) 
                 inplace_change('Temp/word/document.xml','BASE_Y',base[i]['y']) 
                 inplace_change('Temp/word/document.xml','BASE_Z',base[i]['z'])   
-
                 inplace_change('Temp/word/document.xml','BASE_A',base[i]['a']) 
                 inplace_change('Temp/word/document.xml','BASE_B',base[i]['b']) 
                 inplace_change('Temp/word/document.xml','BASE_C',base[i]['c']) 
 
-        inplace_change('Temp/word/document.xml','TCP_N',)
-        inplace_change('Temp/word/document.xml','T_ID',)
-        inplace_change('Temp/word/document.xml','TCP_X') 
-        inplace_change('Temp/word/document.xml','TCP_Y') 
-        inplace_change('Temp/word/document.xml','TCP_Z')   
-        inplace_change('Temp/word/document.xml','TCP_A') 
-        inplace_change('Temp/word/document.xml','TCP_B') 
-        inplace_change('Temp/word/document.xml','TCP_C')  
-
-        inplace_change('Temp/word/document.xml','BASE_N',)
-        inplace_change('Temp/word/document.xml','B_ID',)
-        inplace_change('Temp/word/document.xml','BASE_X',) 
-        inplace_change('Temp/word/document.xml','BASE_Y',) 
-        inplace_change('Temp/word/document.xml','BASE_Z',)   
-        inplace_change('Temp/word/document.xml','BASE_A',) 
-        inplace_change('Temp/word/document.xml','BASE_B',) 
-        inplace_change('Temp/word/document.xml','BASE_C',) 
-
+        inplace_change('Temp/word/document.xml','',)
 
         backup = zipfile.ZipFile(filename+'.docx', 'w')
+
         for folder, subfolders, files in os.walk('Temp\\'):
-    
             for file in files:
                 backup.write(os.path.join(folder, file), os.path.relpath(os.path.join(folder,file), 'Temp\\'), compress_type = zipfile.ZIP_DEFLATED)
         backup.close()
@@ -218,6 +195,9 @@ def calculations(obj):
     backupsdir = 'Backups'
     files = os.listdir(backupsdir)
 
+    tcp={}
+    base={}
+
     for filename in files:
         if ('.zip' in filename): #and (len("gg") >5)
             print('Working on %s'%(filename))
@@ -228,18 +208,12 @@ def calculations(obj):
             backup=zipfile.ZipFile('%s/%s'%(backupsdir,filename),'r')
             name=filename.replace('.zip','')
 
-            tcp={}
-            base={}
-
             searchfile = backup.open('KRC/R1/System/$config.dat','r')
-            
-            #   REgexp example
-            #   old method performance: ~0,92 - 1.0054 sec
 
             data = searchfile.read()
             my_string = data.decode('utf-8')
 
-            TD = re.findall("TOOL_DATA.*",my_string)
+            TD = re.findall("TOOL_DATA.*",my_string) #   old method performance: ~0,92 - 1.0054 sec
             TN = re.findall("TOOL_NAME.*",my_string)
             BD = re.findall("BASE_DATA.*",my_string)
             BN = re.findall("BASE_NAME.*",my_string)
@@ -260,7 +234,6 @@ def calculations(obj):
             
             write(name)
 
-
     # print('TOOLS')
     # for index in tcp:
     #     print(index)
@@ -271,17 +244,13 @@ def calculations(obj):
     #     print(index)
     #     print(base[index])
 
-
     print("")
     print("----- %s seconds -----" % (time.time() - start_time))
     print("Everything is done. This window will close in 3 sec")
     print("")
     print("=================================================")
-    print("Robot Report v0.1. Check for updates at:")
+    print("Robot Report v0.3. Check for updates at:")
     print("        www.fabryka-robotow.pl")
-    #time.sleep(3)
-    #obj.wynikEdt.setText('results') 
-
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    
 

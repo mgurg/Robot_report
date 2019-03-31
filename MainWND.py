@@ -6,12 +6,9 @@ from PyQt5.QtWidgets import QLabel, QGridLayout
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMessageBox
 
-
-
 class Ui_Widget(object):
     def setupUi(self):
         
-
         self.reportBtn = QPushButton("&Generate TOOL/BASE report", self)
         koniecBtn = QPushButton("&Close app", self)
         koniecBtn.resize(koniecBtn.sizeHint())
@@ -43,5 +40,5 @@ class Ui_Widget(object):
         #self.liczba1Edt.setFocus()
         self.setGeometry(20, 20, 300, 100)
         self.setWindowIcon(QIcon('Robot_Icon.png'))
-        self.setWindowTitle("Robot Report v0.2")
+        self.setWindowTitle("Robot Report v0.3")
         self.show()
