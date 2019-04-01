@@ -132,50 +132,57 @@ def calculations(obj):
     #         print(guebergabe[fnum])
 
 
-    def inplace_change(filename, old_string, new_string=''):
+    # def inplace_change(filename, old_string, new_string=''): #   old method performance: ~0,75 sec
         # Safely read the input filename using 'with'
-        with open(filename) as f:
-            s = f.read()
+        # with open(filename) as f:
+        #     s = f.read()
 
         # Safely write the changed content, if found in the file
-        with open(filename, 'w') as f:
+        # with open(filename, 'w') as f:
             #print 'Changing "{old_string}" to "{new_string}" in {filename}'
-            if len(new_string) == 0:
-                s = re.sub("T_ID|TCP_N|TCP_X|TCP_Y|TCP_Z|TCP_A|TCP_B|TCP_C|B_ID|BASE_N|BASE_X|BASE_Y|BASE_Z|BASE_A|BASE_B|BASE_C", "", s) #clear all unused
-            else:
-                s = re.sub(old_string, new_string, s, 1)
-            f.write(s)
+            # if len(new_string) == 0:
+            #     s = re.sub("T_ID|TCP_N|TCP_X|TCP_Y|TCP_Z|TCP_A|TCP_B|TCP_C|B_ID|BASE_N|BASE_X|BASE_Y|BASE_Z|BASE_A|BASE_B|BASE_C", "", s) #clear all unused
+            # else:
+            #     s = re.sub(old_string, new_string, s, 1)
+            # f.write(s)
 
     def write(filename):
         backup=zipfile.ZipFile('ReportTemplate/OLP.docx','r')
         backup.extractall('Temp/')
         backup.close
 
+        sfile = open('Temp/word/document.xml','r')
+        data = sfile.read()
+        sfile.close()
+
         for i in tcp:
             if len(tcp[i]['x'])>0:
-                inplace_change('Temp/word/document.xml','T_ID',str(i))
-
-                inplace_change('Temp/word/document.xml','TCP_N',tcp[i]['name'])
-                inplace_change('Temp/word/document.xml','TCP_X',tcp[i]['x']) 
-                inplace_change('Temp/word/document.xml','TCP_Y',tcp[i]['y']) 
-                inplace_change('Temp/word/document.xml','TCP_Z',tcp[i]['z'])   
-                inplace_change('Temp/word/document.xml','TCP_A',tcp[i]['a']) 
-                inplace_change('Temp/word/document.xml','TCP_B',tcp[i]['b']) 
-                inplace_change('Temp/word/document.xml','TCP_C',tcp[i]['c'])  
+ 
+                data = re.sub('T_ID', str(i), data, 1)
+                data = re.sub('TCP_N', tcp[i]['name'], data, 1)
+                data = re.sub('TCP_X', tcp[i]['x'], data, 1)
+                data = re.sub('TCP_Y', tcp[i]['y'], data, 1)
+                data = re.sub('TCP_Z', tcp[i]['z'], data, 1)
+                data = re.sub('TCP_A', tcp[i]['a'], data, 1)
+                data = re.sub('TCP_B', tcp[i]['b'], data, 1)
+                data = re.sub('TCP_C', tcp[i]['c'], data, 1)
 
         for i in base:
             if len(base[i]['x'])>0:
-                inplace_change('Temp/word/document.xml','B_ID',str(i))
+                data = re.sub('B_ID', str(i), data, 1)
+                data = re.sub('BASE_N', base[i]['name'], data, 1)
+                data = re.sub('BASE_X', base[i]['x'], data, 1)
+                data = re.sub('BASE_Y', base[i]['y'], data, 1)
+                data = re.sub('BASE_Z', base[i]['z'], data, 1)
+                data = re.sub('BASE_A', base[i]['a'], data, 1)
+                data = re.sub('BASE_B', base[i]['b'], data, 1)
+                data = re.sub('BASE_C', base[i]['c'], data, 1)
 
-                inplace_change('Temp/word/document.xml','BASE_N',base[i]['name'])
-                inplace_change('Temp/word/document.xml','BASE_X',base[i]['x']) 
-                inplace_change('Temp/word/document.xml','BASE_Y',base[i]['y']) 
-                inplace_change('Temp/word/document.xml','BASE_Z',base[i]['z'])   
-                inplace_change('Temp/word/document.xml','BASE_A',base[i]['a']) 
-                inplace_change('Temp/word/document.xml','BASE_B',base[i]['b']) 
-                inplace_change('Temp/word/document.xml','BASE_C',base[i]['c']) 
-
-        inplace_change('Temp/word/document.xml','',)
+        data = re.sub('T_ID|TCP_N|TCP_X|TCP_Y|TCP_Z|TCP_A|TCP_B|TCP_C|B_ID|BASE_N|BASE_X|BASE_Y|BASE_Z|BASE_A|BASE_B|BASE_C', '', data) #clear all unused
+        
+        f= open("Temp/word/document.xml","w+")
+        f.write(data)
+        f.close()
 
         backup = zipfile.ZipFile(filename+'.docx', 'w')
 
