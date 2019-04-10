@@ -87,8 +87,29 @@ def calculations(obj):
         return coords
 
     def get_name2(line):
-        NN = re.search('[\"](\w+)',line)    
+        NN = re.search('[\"]([a-zA-Z0-9 ]+)',line) # any char (space included)   
         return str(NN.group(1))
+
+    def get_folges(backup):
+        flist={}
+        path='KRC/R1/Folgen/'
+        for ifile in backup.namelist():
+            if ifile[0:len(path)]==path:
+                if ifile[len(ifile)-4:].lower()=='.src':
+                    filename = ifile[len(path):len(ifile)-4].upper()
+                if filename!='CELL':
+                    flist[filename]=get_program(backup,ifile,filename)
+        return flist
+
+    def get_ups(backup):
+        flist={}
+        path='KRC/R1/UPs/'
+        for ifile in backup.namelist():
+            if ifile[0:len(path)]==path:
+                if ifile[len(ifile)-4:].lower()=='.src':
+                    filename = ifile[len(path):len(ifile)-4].upper()
+                    flist[filename]=get_program(backup,ifile,filename)
+        return flist
 
     # def get_jcoord(line,coord):
     #     pos=line.find(coord)+len(coord)
@@ -157,7 +178,6 @@ def calculations(obj):
 
         for i in tcp:
             if len(tcp[i]['x'])>0:
- 
                 data = re.sub('T_ID', str(i), data, 1)
                 data = re.sub('TCP_N', tcp[i]['name'], data, 1)
                 data = re.sub('TCP_X', tcp[i]['x'], data, 1)
@@ -206,7 +226,7 @@ def calculations(obj):
     base={}
 
     for filename in files:
-        if ('.zip' in filename): #and (len("gg") >5)
+        if ('.zip' in filename):
             print('Working on %s'%(filename))
 
             obj.statusLbl.setText('Working on %s'%(filename))
@@ -220,7 +240,7 @@ def calculations(obj):
             data = searchfile.read()
             my_string = data.decode('utf-8')
 
-            TD = re.findall("TOOL_DATA.*",my_string) #   old method performance: ~0,92 - 1.0054 sec
+            TD = re.findall("TOOL_DATA.*",my_string) # old method performance: ~0,92 - 1.0054 sec
             TN = re.findall("TOOL_NAME.*",my_string)
             BD = re.findall("BASE_DATA.*",my_string)
             BN = re.findall("BASE_NAME.*",my_string)
@@ -240,6 +260,21 @@ def calculations(obj):
                     base[j]['name'] = get_name2(BN[j])        
             
             write(name)
+
+
+            
+        # Get programs
+        # i=0
+        # folges = get_folges(backup)
+        # ups = get_ups(backup)
+        # for folge in sorted(folges):
+        #     i+=1
+        #     programs[i]=folges[folge]
+        # for up in sorted(ups):
+        #     i+=1
+        #     programs[i]=ups[up]
+
+        # backup.close()
 
     # print('TOOLS')
     # for index in tcp:
