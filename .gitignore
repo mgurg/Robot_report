@@ -1,4 +1,3 @@
-
 *.7z
 *.docx
 *.xml
@@ -7,29 +6,28 @@
 *.zip_
 *.dat
 *.zip
+*.bat
 setup.py
-.vscode/launch.json
-Output/template.fodg
 *.ui
-.vscode/settings.json
 *.fodg
 *._dat
 *.exe
 *.ico
 *.txt
-ToCompile/_compile.bat
-ToCompile/AKE_compile.bat
-ToCompile/FR_compile.bat
-*.pyc
-.vscode/.ropeproject/config.py
-.vscode/.ropeproject/objectdb
+.vscode/
 
+bin/
+data/
+docs/
+output/
+resources/
 
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+__pycache__
 
 # C extensions
 *.so

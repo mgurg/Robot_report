@@ -7,19 +7,15 @@ Website: -
 Version: 0.3 dev
 Last edited: March 2019
 """
-
-from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtWidgets import QMessageBox
-from MainWND import Ui_Widget
-
 import sys
 import os,zipfile
 import time
 import re
 import shutil
 
-#TODO:
-
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QMessageBox
+from rr_main_gui import Ui_Widget
 
 class RobotUtilities(QWidget, Ui_Widget):
     def __init__(self, parent=None):
@@ -28,10 +24,10 @@ class RobotUtilities(QWidget, Ui_Widget):
         self.setupUi()
 
     # Obsługa zamkniecia - przycisk koniec
-    def koniec(self):
+    def close_app(self):
         self.close()
 
-    def generateReport(self):
+    def generate_report(self):
         self.reportBtn.setEnabled(False)
         self.reportBtn.repaint()
 
@@ -66,9 +62,9 @@ def calculations(obj):
 
         #  X\s(.*?),|Y\s(.*?),|Z\s(.*?),|A\s(.*?),|B\s(.*?),|C\s(.*?)}
         #XYZABC = re.findall('X\s(.*?),|Y\s(.*?),|Z\s(.*?),|A\s(.*?),|B\s(.*?),|C\s(.*?)}',line)
-        #print(XYZABC)        
-        #X = str(XYZABC.group(1))  
-        #Y = str(XYZABC.group(2)) 
+        #print(XYZABC)
+        #X = str(XYZABC.group(1))
+        #Y = str(XYZABC.group(2))
         #print (X + '   '+ Y)
 
         XX = re.search("X\s(.*?),", line)
@@ -87,10 +83,10 @@ def calculations(obj):
         return coords
 
     def get_name2(line):
-        NN = re.search('[\"]([a-zA-Z0-9 ]+)',line) # any char (space included)   
+        NN = re.search('[\"]([a-zA-Z0-9 ]+)',line) # any char (space included)
         return str(NN.group(1))
 
-    def get_folges(backup):
+    def get_folges(backup):  # VW
         flist={}
         path='KRC/R1/Folgen/'
         for ifile in backup.namelist():
@@ -101,7 +97,7 @@ def calculations(obj):
                     flist[filename]=get_program(backup,ifile,filename)
         return flist
 
-    def get_ups(backup):
+    def get_ups(backup):  # VW
         flist={}
         path='KRC/R1/UPs/'
         for ifile in backup.namelist():
@@ -111,61 +107,6 @@ def calculations(obj):
                     flist[filename]=get_program(backup,ifile,filename)
         return flist
 
-    # def get_jcoord(line,coord):
-    #     pos=line.find(coord)+len(coord)
-    #     return line[pos:line[pos:].find(',')+pos]
-
-    # def round_coord(text):
-    #     return str(round(float(text),3))
-
-    # def empty_guebergabe():
-    #     guebergabe={}
-    #     guebergabe['A1']=''
-    #     guebergabe['A2']=''
-    #     guebergabe['A3']=''
-    #     guebergabe['A4']=''
-    #     guebergabe['A5']=''
-    #     guebergabe['A6']=''
-    #     guebergabe['E1']=''
-    #     guebergabe['name']=''
-    #     return guebergabe
-
-    # def get_guebergabe(line):
-    #     guebergabe={}
-    #     #line=line[13:].replace('}',',')
-    #     guebergabe['A1']=get_jcoord(line,'A1')
-    #     guebergabe['A2']=get_jcoord(line,'A2')
-    #     guebergabe['A3']=get_jcoord(line,'A3')
-    #     guebergabe['A4']=get_jcoord(line,'A4')
-    #     guebergabe['A5']=get_jcoord(line,'A5')
-    #     guebergabe['A6']=get_jcoord(line,'A6')
-    #     guebergabe['E1']=get_jcoord(line,'E1')
-    #     return guebergabe
-
-    # guebergabe={}
-    # filename = "Backup/user_global.dat"
-    # searchfile = open(filename, "r")
-    # for line in searchfile:
-    #     if line[19:30] == "XGUEBERGABE":
-    #         fnum=int(line[30:line.find("=")-1])
-    #         guebergabe[fnum]=get_guebergabe(line[30:])
-    #         guebergabe[fnum]['name'] = 'GU'+str(fnum)
-    #         print(guebergabe[fnum])
-
-
-    # def inplace_change(filename, old_string, new_string=''): #   old method performance: ~0,75 sec
-        # Safely read the input filename using 'with'
-        # with open(filename) as f:
-        #     s = f.read()
-
-        # Safely write the changed content, if found in the file
-        # with open(filename, 'w') as f:
-            #print 'Changing "{old_string}" to "{new_string}" in {filename}'
-            # if len(new_string) == 0:
-            #     s = re.sub("T_ID|TCP_N|TCP_X|TCP_Y|TCP_Z|TCP_A|TCP_B|TCP_C|B_ID|BASE_N|BASE_X|BASE_Y|BASE_Z|BASE_A|BASE_B|BASE_C", "", s) #clear all unused
-            # else:
-            #     s = re.sub(old_string, new_string, s, 1)
-            # f.write(s)
 
     def write(filename):
         backup=zipfile.ZipFile('ReportTemplate/OLP.docx','r')
@@ -199,7 +140,7 @@ def calculations(obj):
                 data = re.sub('BASE_C', base[i]['c'], data, 1)
 
         data = re.sub('T_ID|TCP_N|TCP_X|TCP_Y|TCP_Z|TCP_A|TCP_B|TCP_C|B_ID|BASE_N|BASE_X|BASE_Y|BASE_Z|BASE_A|BASE_B|BASE_C', '', data) #clear all unused
-        
+
         f= open("Temp/word/document.xml","w+")
         f.write(data)
         f.close()
@@ -211,11 +152,11 @@ def calculations(obj):
                 backup.write(os.path.join(folder, file), os.path.relpath(os.path.join(folder,file), 'Temp\\'), compress_type = zipfile.ZIP_DEFLATED)
         backup.close()
 
-        shutil.rmtree('Temp/') 
+        shutil.rmtree('Temp/')
 
     #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     # MAIN PROGRAM
-    #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX        
+    #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
     start_time = time.time()
 
@@ -257,34 +198,9 @@ def calculations(obj):
                 result = str(BD[j]).find("{X 0.0,Y 0.0,Z 0.0,A 0.0,B 0.0,C 0.0}")
                 if result < 0:
                     base[j] = get_coords2(BD[j])
-                    base[j]['name'] = get_name2(BN[j])        
-            
+                    base[j]['name'] = get_name2(BN[j])
+
             write(name)
-
-
-            
-        # Get programs
-        # i=0
-        # folges = get_folges(backup)
-        # ups = get_ups(backup)
-        # for folge in sorted(folges):
-        #     i+=1
-        #     programs[i]=folges[folge]
-        # for up in sorted(ups):
-        #     i+=1
-        #     programs[i]=ups[up]
-
-        # backup.close()
-
-    # print('TOOLS')
-    # for index in tcp:
-    #     print(index)
-    #     print(tcp[index])
-
-    # print('BASE')
-    # for index in base:
-    #     print(index)
-    #     print(base[index])
 
     print("")
     print("----- %s seconds -----" % (time.time() - start_time))
@@ -294,7 +210,7 @@ def calculations(obj):
     print("Robot Utilities v0.3. Check for updates at:")
     print("        www.fabryka-robotow.pl")
 
-# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 if __name__ == '__main__':
     import sys
