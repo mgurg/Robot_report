@@ -5,6 +5,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QLabel, QGridLayout
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QRadioButton
 
 class Ui_Widget(object):
     def setupUi(self):
@@ -15,20 +16,30 @@ class Ui_Widget(object):
 
         # Labels
         wwwLbl = QLabel()
-        wwwLbl.setText('''<a href='https://roboticsbook.com/RobotReport/'>RobotReport website - check for updates</a>''') 
+        wwwLbl.setText('''<a href='https://roboticsbook.com/Robot-Utilities/'>Robot Utilities website - check for updates</a>''') 
         wwwLbl.setOpenExternalLinks(True)
 
         descLbl = QLabel()
         descLbl.setText("Generate reports from KUKA robot backups (*.zip)") 
 
         self.statusLbl = QLabel("Status", self)
+
+        #Radiobutton
+        vagRb = QRadioButton("VW (V)KRC - VASS")
+        dagRb = QRadioButton("Daimler - Integra")
+        miscRb= QRadioButton("KUKA KRC - General")
+
         
         ukladT = QGridLayout()
         ukladT.addWidget(descLbl, 1, 0, 1, 3)
-        ukladT.addWidget(self.statusLbl, 2, 0, 1, 3)
-        ukladT.addWidget(self.reportBtn, 3, 0, 1, 3)
-        ukladT.addWidget(koniecBtn, 4, 0, 1, 3)
-        ukladT.addWidget(wwwLbl, 5,0,1,3)
+        # ukladT.addWidget(miscRb, 2,0,1,3)
+        # ukladT.addWidget(vagRb, 3,0,1,3)
+        # ukladT.addWidget(dagRb, 4,0,1,3)
+        ukladT.addWidget(self.statusLbl, 5, 0, 1, 3)
+        ukladT.addWidget(self.reportBtn, 6, 0, 1, 3)
+        ukladT.addWidget(koniecBtn, 7, 0, 1, 3)
+        ukladT.addWidget(wwwLbl, 8,0,1,3)
+
 
         # przypisanie utworzonego układu do okna
         self.setLayout(ukladT)
@@ -40,5 +51,5 @@ class Ui_Widget(object):
         #self.liczba1Edt.setFocus()
         self.setGeometry(20, 20, 300, 100)
         self.setWindowIcon(QIcon('Robot_Icon.png'))
-        self.setWindowTitle("Robot Report v0.3")
+        self.setWindowTitle("Robot Utilities v0.3")
         self.show()

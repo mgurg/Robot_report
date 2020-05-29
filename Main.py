@@ -21,7 +21,7 @@ import shutil
 #TODO:
 
 
-class RobotReport(QWidget, Ui_Widget):
+class RobotUtilities(QWidget, Ui_Widget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -291,7 +291,7 @@ def calculations(obj):
     print("Everything is done. This window will close in 3 sec")
     print("")
     print("=================================================")
-    print("Robot Report v0.3. Check for updates at:")
+    print("Robot Utilities v0.3. Check for updates at:")
     print("        www.fabryka-robotow.pl")
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    
@@ -300,5 +300,5 @@ if __name__ == '__main__':
     import sys
 
     app = QApplication(sys.argv)
-    Form = RobotReport()
+    Form = RobotUtilities()
     sys.exit(app.exec_())
