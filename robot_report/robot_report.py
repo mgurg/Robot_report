@@ -23,7 +23,6 @@ class RobotUtilities(QWidget, Ui_Widget):
 
         self.setupUi()
 
-    # Obsługa zamkniecia - przycisk koniec
     def close_app(self):
         self.close()
 
@@ -35,7 +34,6 @@ class RobotUtilities(QWidget, Ui_Widget):
 
         self.reportBtn.setEnabled(True)
 
-    # przechwycenie zamkniecia - MessageBox
     def closeEvent(self, event):
 
         odp = QMessageBox.question(
@@ -48,7 +46,7 @@ class RobotUtilities(QWidget, Ui_Widget):
         else:
             event.ignore()
 
-    # zamykanie przez ESC
+    # ESC - close app
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
             self.close()
